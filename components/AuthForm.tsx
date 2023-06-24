@@ -4,6 +4,8 @@ import { useCallback, useState } from 'react'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import Button from './Button'
 import Input from './Inputs/Input'
+import AuthSocialButton from './AuthSocialButton'
+import { BsGithub, BsGoogle } from 'react-icons/bs'
 
 type Variant = 'LOGIN' | 'REGISTER'
 
@@ -53,6 +55,7 @@ const AuthForm = () => {
               id='name'
               type='text'
               errors={errors}
+              disabled={isLoading}
             />
           )}
 
@@ -62,6 +65,7 @@ const AuthForm = () => {
             id='email'
             type='email'
             errors={errors}
+            disabled={isLoading}
           />
 
           <Input
@@ -70,6 +74,7 @@ const AuthForm = () => {
             id='password'
             type='password'
             errors={errors}
+            disabled={isLoading}
           />
 
           <div>
@@ -84,6 +89,36 @@ const AuthForm = () => {
             <div className='absolute inset-0 flex items-center'>
               <div className='w-full border-t border-gray-300' />
             </div>
+
+            <div className='relative flex justify-center text-sm'>
+              <span className='bg-white px-2 text-gray-500'>
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className='mt-6 flex gap-2'>
+            <AuthSocialButton
+              Icon={BsGithub}
+              onClick={() => socialActions('GITHUB')}
+            />
+
+            <AuthSocialButton
+              Icon={BsGoogle}
+              onClick={() => socialActions('GOOGLE')}
+            />
+          </div>
+        </div>
+
+        <div className='mt-6 flex justify-center gap-2 px-2 text-sm text-gray-500'>
+          <div>
+            {variant === 'LOGIN'
+              ? 'Don’t have an account?'
+              : 'Already have an account?'}
+          </div>
+
+          <div onClick={toggleVariant} className='cursor-pointer underline'>
+            {variant === 'LOGIN' ? 'Register' : 'Log In'}
           </div>
         </div>
       </div>
