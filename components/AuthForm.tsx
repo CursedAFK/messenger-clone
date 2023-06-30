@@ -1,8 +1,9 @@
 'use client'
 
 import axios from 'axios'
-import { signIn } from 'next-auth/react'
-import { useCallback, useState } from 'react'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { BsGithub, BsGoogle } from 'react-icons/bs'
@@ -15,6 +16,10 @@ type Variant = 'LOGIN' | 'REGISTER'
 const AuthForm = () => {
   const [variant, setVariant] = useState<Variant>('LOGIN')
   const [isLoading, setIsLoading] = useState(false)
+
+  const session = useSession()
+
+  const router = useRouter()
 
   const toggleVariant = useCallback(
     () => (variant === 'LOGIN' ? setVariant('REGISTER') : setVariant('LOGIN')),
@@ -39,6 +44,11 @@ const AuthForm = () => {
     if (variant === 'REGISTER') {
       axios
         .post('/api/register', data)
+        .then(function () {
+          signIn('credentials', {
+            ...data
+          })
+        })
         .catch(function () {
           toast.error('Something went wrong')
         })
@@ -59,6 +69,7 @@ const AuthForm = () => {
 
           if (callback?.ok && !callback.error) {
             toast.success('Logged in successfully')
+            router.push('/users')
           }
         })
         .finally(function () {
@@ -69,7 +80,32 @@ const AuthForm = () => {
 
   const socialActions = (action: string) => {
     setIsLoading(true)
+
+    signIn(action.toLowerCase(), {
+      redirect: false
+    })
+      .then(function (callback) {
+        if (callback?.error) {
+          toast.error('Invalid credentials')
+        }
+
+        if (callback?.ok && !callback.error) {
+          toast.success('Logged in successfully')
+        }
+      })
+      .finally(function () {
+        setIsLoading(false)
+      })
   }
+
+  useEffect(
+    function () {
+      if (session.status === 'authenticated') {
+        router.push('/users')
+      }
+    },
+    [session, router]
+  )
 
   return (
     <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>

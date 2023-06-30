@@ -1,6 +1,7 @@
+import AuthContext from '@/context/AuthContext'
+import ToasterContext from '@/context/ToasterContext'
 import { Metadata } from 'next'
 import './globals.css'
-import ToasterContext from '@/context/ToasterContext'
 
 interface RootLayoutProps {
   children: React.ReactNode
@@ -15,8 +16,10 @@ const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang='en'>
       <body>
-        <ToasterContext />
-        {children}
+        <AuthContext>
+          <ToasterContext />
+          {children}
+        </AuthContext>
       </body>
     </html>
   )
