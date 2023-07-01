@@ -1,6 +1,6 @@
 'use client'
 
-import useRoutes from '@/app/hooks/useRoutes'
+import useRoutes from '@/hooks/useRoutes'
 import { useState } from 'react'
 
 export default function DesktopSidebar() {
